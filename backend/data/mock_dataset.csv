@@ -1,0 +1,60 @@
+id,name,role,company,industry,location,company_size,revenue_band,engagement_score,pain_point_focus,email,linked_url,phone
+1,Matthieu Hendriksen,Founder,Tekfly,E-commerce,London,200-500,10M-50M,50,Automation Scaling Growth,mhendriksen@tekfly.com,,648-727-2112
+2,Diana Jandac,Operations Manager,Wordtune,SaaS,New York,200-500,10M-50M,40,Process Optimization Cost Reduction,djandac@wordtune.com,,577-250-2723
+3,Sallee Kilbey,HR Manager,Vidoo,EdTech,London,50-200,1M-10M,85,Talent Acquisition Employee Retention,skilbey@vidoo.com,,262-615-8347
+4,Joseito Mara,Operations Manager,Topicware,AI,Berlin,200-500,10M-50M,60,Automation Efficiency,jmara@topicware.com,,788-158-8280
+5,Nerte Campione,CTO,Youfeed,E-commerce,London,500+,50M+,74,Digital Transformation,ncampione@youfeed.com,,647-342-6687
+6,Cam Belfit,Human Resource Manager,Flashset,EdTech,London,200-500,10M-50M,92,Hiring Workforce Planning,cbelfit@flashset.com,,607-722-0887
+7,Isidore Bardell,CTO,Jaxworks,Fintech,Singapore,200-500,50M+,75,Security Scaling,ibardell@jaxworks.com,,166-815-7313
+8,Gilles Heys,Marketing Head,Wordpedia,E-commerce,Mumbai,50-200,1M-10M,70,Lead Generation Branding,gheys@wordpedia.com,,184-363-7240
+9,Bary Morden,Founder,Divavu,EdTech,New York,200-500,10M-50M,65,Growth Scaling,bmorden@divavu.com,,303-270-1705
+10,Bridie Wardley,Finance Manager,Miboo,EdTech,London,500+,50M+,45,Cost Optimization,bwardley@miboo.com,,576-430-9934
+11,Silvano Armiger,Product Manager,Bubblemix,Manufacturing,Berlin,50-200,1M-10M,55,Product Scaling,sarmiger@bubblemix.com,,558-799-2252
+12,Walliw Eykel,HR Business Partner,Fivespan,SaaS,London,50-200,10M-50M,88,Talent Strategy,weykel@fivespan.com,,808-899-4545
+13,Dunstan Kennon,Product Manager,Quinu,AI,Singapore,50-200,10M-50M,66,Innovation Scaling,dkennon@quinu.com,,959-583-3354
+14,Sukey McIlwreath,Sales Director,Flipbug,Manufacturing,New York,50-200,50M+,72,Revenue Growth,smcilwreath@flipbug.com,,446-999-3360
+15,Kirbee Friar,Finance Manager,Trupe,Healthcare,Mumbai,500+,50M+,58,Financial Planning,kfriar@trupe.com,,836-130-7717
+16,Elonore Kaines,People Operations Lead,Meembee,Cybersecurity,London,500+,50M+,90,Workforce Optimization,ekaines@meembee.com,,253-887-7199
+17,Gaylord Tabbernor,Marketing Head,Shufflebeat,Fintech,Berlin,200-500,10M-50M,57,Brand Expansion,gtabbernor@shufflebeat.com,,675-106-0587
+18,Yule Feltham,Operations Manager,Kaymbo,SaaS,Singapore,50-200,1M-10M,29,Operational Efficiency,yfeltham@kaymbo.com,,788-754-7617
+19,Hally Leach,Marketing Head,Tanoodle,Fintech,Mumbai,50-200,10M-50M,64,Customer Retention,hleach@tanoodle.com,,555-551-4318
+20,Scarface Powell,Product Manager,Topiclounge,Healthcare,New York,50-200,10M-50M,48,Product Optimization,spowell@topiclounge.com,,720-950-3688
+21,Aili Gier,CTO,Voonix,E-commerce,Kubangeceng,50-200,<1M 1M-10M 10M-50M 50M+,39,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,agierk@mlb.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,943-102-3921
+22,Burlie Pourvoieur,Founder,Quinu,Cybersecurity,Cacequi,500+,<1M 1M-10M 10M-50M 50M+,97,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,bpourvoieurl@soup.io,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,444-902-4123
+23,Sibelle Allot,HR,Eamia,Manufacturing,Ikšķile,500+,<1M 1M-10M 10M-50M 50M+,16,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,sallotm@photobucket.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,829-118-3696
+24,Lita Allard,Operations Manager,Camimbo,Healthcare,Järvakandi,Jan-50,<1M 1M-10M 10M-50M 50M+,17,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,lallardn@seattletimes.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,523-891-8679
+25,Sonja Le Grove,CTO,Gevee,AI,Gryfów Śląski,500+,<1M 1M-10M 10M-50M 50M+,67,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,sleo@ifeng.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,419-912-0637
+26,Celestyna Villiers,Sales Director,Rhybox,Manufacturing,Wa,50-200,<1M 1M-10M 10M-50M 50M+,31,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,cvilliersp@ed.gov,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,126-353-6860
+27,Holly Conrart,Product Manager,Thoughtstorm,EdTech,Ban Lŭng,200-500,<1M 1M-10M 10M-50M 50M+,41,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,hconrartq@adobe.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,241-952-0494
+28,Pembroke Zorzenoni,Finance Manager,Meeveo,Healthcare,San Juan Ermita,200-500,<1M 1M-10M 10M-50M 50M+,35,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,pzorzenonir@domainmarket.com,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,675-410-0003
+29,Idell Filippozzi,Sales Director,Edgeblab,EdTech,La Victoria,50-200,<1M 1M-10M 10M-50M 50M+,100,Automation Cost Reduction Compliance Scaling Efficiency Lead Generation Customer Retention Digital Transformation,ifilippozzis@nih.gov,error: Built-in function 'replace' not found. Did you mean to call one of your lambda functions using replace.call(<arguments>)?,255-946-2209
+21,Aili Gier,CTO,Voonix,E-commerce,London,50-200,10M-50M,76,Platform Scaling,agier@voonix.com,,943-102-3921
+22,Burlie Pourvoieur,Founder,Quinu,Cybersecurity,New York,500+,50M+,89,Security Expansion,bpourvoieur@quinu.com,,444-902-4123
+23,Sibelle Allot,HR Manager,Eamia,Manufacturing,Berlin,500+,50M+,68,Talent Development,sallot@eamia.com,,829-118-3696
+24,Lita Allard,Operations Manager,Camimbo,Healthcare,Mumbai,50-200,10M-50M,52,Process Automation,lallard@camimbo.com,,523-891-8679
+25,Sonja Le Grove,CTO,Gevee,AI,Singapore,500+,50M+,91,AI Infrastructure,slegrove@gevee.com,,419-912-0637
+26,Celestyna Villiers,Sales Director,Rhybox,Manufacturing,London,50-200,10M-50M,73,Revenue Growth,cvilliers@rhybox.com,,126-353-6860
+27,Holly Conrart,Product Manager,Thoughtstorm,EdTech,New York,200-500,10M-50M,61,Product Expansion,hconrart@thoughtstorm.com,,241-952-0494
+28,Pembroke Zorzenoni,Finance Manager,Meeveo,Healthcare,Berlin,200-500,10M-50M,44,Cost Optimization,pzorzenoni@meeveo.com,,675-410-0003
+29,Idell Filippozzi,Sales Director,Edgeblab,EdTech,London,50-200,50M+,96,Market Expansion,ifilippozzi@edgeblab.com,,255-946-2209
+30,Dina Sadat,Finance Manager,Nlounge,AI,Singapore,200-500,50M+,83,Financial Scaling,dsadat@nlounge.com,,153-590-1551
+31,Jesse Tolomelli,Product Manager,Yabox,Cybersecurity,New York,50-200,10M-50M,49,Product Innovation,jtolomelli@yabox.com,,764-494-4484
+32,Judah Birckmann,CTO,Browsecat,EdTech,Mumbai,50-200,10M-50M,58,Tech Scaling,jbirckmann@browsecat.com,,582-685-8746
+33,Sue Minshull,Marketing Head,Vinder,Cybersecurity,London,50-200,10M-50M,94,Brand Leadership,sminshull@vinder.com,,178-516-0109
+34,Clifford Bentzen,Product Manager,Livetube,SaaS,Berlin,Jan-50,1M-10M,39,Product Optimization,cbentzen@livetube.com,,502-777-6283
+35,Rania Baytrop,Sales Director,Gabspot,EdTech,Mumbai,500+,50M+,67,Revenue Expansion,rbaytrop@gabspot.com,,783-123-2743
+36,Celle Capper,Sales Director,Realbridge,Manufacturing,Singapore,500+,50M+,72,Enterprise Sales,ccapper@realbridge.com,,128-391-5571
+37,Abraham Featherstonehaugh,Sales Director,Npath,EdTech,London,500+,50M+,88,Strategic Partnerships,afeatherstonehaugh@npath.com,,888-412-3872
+38,Addison Andreuzzi,CTO,Wikizz,Fintech,Paris,50-200,10M-50M,95,Platform Architecture,aandreuzzi@wikizz.com,,445-825-6726
+39,Salem Ashbey,Operations Manager,Dabfeed,Fintech,Mumbai,500+,50M+,77,Operational Scaling,sashbey@dabfeed.com,,248-813-9942
+40,Bonnee Limpenny,Finance Manager,Yodo,Fintech,New York,500+,50M+,53,Cost Management,blimpenny@yodo.com,,506-981-1719
+41,Aile Cromwell,CTO,Katz,Manufacturing,Berlin,500+,50M+,69,Infrastructure Upgrade,acromwell@katz.com,,224-890-6898
+42,Bartolomeo Haruard,Founder,Flipopia,E-commerce,London,Jan-50,1M-10M,84,Startup Growth,bharuard@flipopia.com,,219-118-7113
+43,Aaren Hellin,Marketing Head,Eadel,E-commerce,New York,500+,50M+,59,Customer Acquisition,ahellin@eadel.com,,545-190-8122
+44,Hussein Fossitt,Operations Manager,Livepath,Fintech,Singapore,500+,50M+,74,Operational Excellence,hfossitt@livepath.com,,391-390-9687
+45,Leilah Bewfield,Finance Manager,Buzzshare,EdTech,Mumbai,Jan-50,1M-10M,46,Financial Strategy,lbewfield@buzzshare.com,,683-870-5973
+46,Klemens Kensitt,Founder,Babbleset,Fintech,Berlin,200-500,10M-50M,79,Expansion Strategy,kkensitt@babbleset.com,,818-889-0079
+47,Gertie Jukes,Sales Director,Eare,SaaS,London,50-200,50M+,97,Enterprise Growth,gjukes@eare.com,,220-989-3782
+48,Gratiana Attreed,HR Business Partner,Oyope,E-commerce,Singapore,200-500,10M-50M,62,Talent Engagement,gattreed@oyope.com,,684-889-3235
+49,Gayle Dulwitch,Marketing Head,Realblab,Cybersecurity,Berlin,200-500,10M-50M,71,Brand Awareness,gdulwitch@realblab.com,,872-705-1439
+50,Xenos Diano,Product Manager,JumpXS,Cybersecurity,New York,500+,50M+,55,Product Growth,xdiano@jumpxs.com,,771-768-7935
