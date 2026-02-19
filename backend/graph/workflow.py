@@ -1,13 +1,17 @@
+"""
+Multi-Agent System Workflow – Assessment Task 2 Architecture
+
+Flow: User Input → A1 Classification → A2 ICP → A3 Platform Decision → A4 Content Generation
+Output: Content delivered via LinkedIn (A4), Email (A5), or Call (A6) channel
+"""
+
 from typing import TypedDict, List, Dict
 from langgraph.graph import StateGraph
 
-# Absolute imports (since we run from backend folder)
 from agents.classification_agent import classification_agent
 from agents.icp_agent import icp_agent
 from agents.platform_agent import platform_decision_agent
-from agents.linkedin_agent import linkedin_agent
-from agents.email_agent import email_agent
-from agents.call_agent import call_agent
+from agents.content_agent import content_generation_agent
 
 
 # ---------------------------
@@ -19,6 +23,7 @@ class AgentState(TypedDict, total=False):
     classification: dict
     icp_rankings: List[Dict]
     selected_channel: str
+    channel_reasoning: str
     generated_content: Dict
 
 
@@ -28,69 +33,32 @@ class AgentState(TypedDict, total=False):
 
 graph = StateGraph(AgentState)
 
-# Core Agents
+# A1 – Classification Agent
 graph.add_node("classification", classification_agent)
+
+# A2 – ICP Module (Ideal Customer Profile)
 graph.add_node("icp", icp_agent)
+
+# A3 – Platform Decision Agent
 graph.add_node("platform", platform_decision_agent)
 
-# Channel Agents
-graph.add_node("linkedin", linkedin_agent)
-graph.add_node("email", email_agent)
-graph.add_node("call", call_agent)
+# A4 – Content Generation Agent (produces content for selected channel)
+graph.add_node("content", content_generation_agent)
 
 
 # ---------------------------
-# Entry Point
+# Linear Flow: A1 → A2 → A3 → A4
 # ---------------------------
 
 graph.set_entry_point("classification")
-
-
-# ---------------------------
-# Core Flow
-# ---------------------------
-
 graph.add_edge("classification", "icp")
 graph.add_edge("icp", "platform")
+graph.add_edge("platform", "content")
+graph.set_finish_point("content")
 
 
 # ---------------------------
-# Conditional Routing
-# ---------------------------
-
-def route_channel(state: AgentState):
-    channel = state.get("selected_channel", "LinkedIn")
-
-    if channel == "LinkedIn":
-        return "linkedin"
-    elif channel == "Email":
-        return "email"
-    else:
-        return "call"
-
-
-graph.add_conditional_edges(
-    "platform",
-    route_channel,
-    {
-        "linkedin": "linkedin",
-        "email": "email",
-        "call": "call"
-    }
-)
-
-
-# ---------------------------
-# Finish Points
-# ---------------------------
-
-graph.set_finish_point("linkedin")
-graph.set_finish_point("email")
-graph.set_finish_point("call")
-
-
-# ---------------------------
-# Compile Graph
+# Compile
 # ---------------------------
 
 app = graph.compile()

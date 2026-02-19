@@ -13,7 +13,7 @@ def call_llm(prompt):
                 "prompt": prompt,
                 "stream": False
             },
-            timeout=120
+            timeout=(3, 8)  # connect: 3s, read: 8s (fail fast, use fallbacks)
         )
 
         if response.status_code != 200:

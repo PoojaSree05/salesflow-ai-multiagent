@@ -13,11 +13,11 @@ def decide_channel_with_rules(classification, icp):
     
     Default: Email (most professional and scalable)
     """
-    # Extract all decision factors
+    # Extract all decision factors (support both snake_case and camelCase from different sources)
     urgency = str(classification.get("urgency", "Medium")).lower()
     engagement_score = int(icp.get("engagement_score", 50))
     icp_priority = str(icp.get("priority", "Medium")).lower()
-    business_behavior = str(classification.get("businessBehavior", "")).lower()
+    business_behavior = str(classification.get("business_behavior") or classification.get("businessBehavior", "")).lower()
     
     # ==========================================
     # PRIORITY 1: URGENCY (First Constraint)
@@ -74,8 +74,8 @@ User Classification:
 Role Needed: {classification.get("role")}
 Location: {classification.get("location")}
 Urgency: {classification.get("urgency")}
-Business Behavior: {classification.get("businessBehavior")}
-User Intent: {classification.get("intent")}
+Business Behavior: {classification.get("business_behavior") or classification.get("businessBehavior")}
+User Intent: {classification.get("user_intent") or classification.get("intent")}
 
 ICP Profile:
 Role: {icp.get("role")}

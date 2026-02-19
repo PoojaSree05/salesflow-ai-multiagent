@@ -38,8 +38,8 @@ PROSPECT INFORMATION:
 - Primary Pain Points: {icp.get("pain_point_focus")}
 
 BUSINESS CONTEXT:
-- Intent: {classification.get("intent")}
-- Behavior: {classification.get("businessBehavior")}
+- Intent: {classification.get("user_intent") or classification.get("intent")}
+- Behavior: {classification.get("business_behavior") or classification.get("businessBehavior")}
 - Urgency: {classification.get("urgency")}
 - Tone: {tone}
 

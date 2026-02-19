@@ -53,18 +53,32 @@ def icp_agent(state):
     if df.empty:
         return {"icp_rankings": []}
 
-    # 🔹 Location pre-filter
+    # 🔹 Location pre-filter (fallback to full dataset if no matches)
     if extracted_location:
-        df = df[df["location"].str.lower().str.contains(str(extracted_location).lower(), na=False)]
+        location_filtered = df[df["location"].str.lower().str.contains(str(extracted_location).lower(), na=False)]
+        if not location_filtered.empty:
+            df = location_filtered
 
-    if df.empty:
-        return {"icp_rankings": []}
+    # 🔹 Industry pre-filter (healthcare, AI, etc.)
+    extracted_industry = classification.get("industry", "")
+    if extracted_industry:
+        ind_filtered = df[df["industry"].str.lower().str.contains(str(extracted_industry).lower(), na=False)]
+        if not ind_filtered.empty:
+            df = ind_filtered
 
     # 🔹 Get unique roles from filtered dataset
     unique_roles = df["role"].dropna().unique().tolist()
 
-    # 🔹 Single LLM call to find best role
-    best_role_match = find_best_matching_role(extracted_role, unique_roles)
+    # 🔹 Fast path: exact or substring match (skip LLM)
+    extracted_lower = (extracted_role or "").lower()
+    best_role_match = ""
+    for r in unique_roles:
+        rl = str(r).lower()
+        if extracted_lower in rl or rl in extracted_lower:
+            best_role_match = r
+            break
+    if not best_role_match:
+        best_role_match = find_best_matching_role(extracted_role, unique_roles)
 
     scored_results = []
 
