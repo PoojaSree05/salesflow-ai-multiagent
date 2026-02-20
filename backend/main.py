@@ -47,7 +47,7 @@ CAMPAIGNS = [
 ]
 
 # Default email for dummy/send - to: recipient, from: sender
-DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "pcoswomenscare@gmail.com")
+DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "prospect@example.com")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "salesflow.aiteam@gmail.com")
 
 # Fallback when workflow/LLM fails - no external deps
@@ -219,12 +219,9 @@ def process_single_icp(classification_transformed, icp_raw, rank, user_input):
             "user_intent": classification_transformed.get("intent")
         }
 
-        # 2. Decide channel - check if agent already recommended one, otherwise use rules
-        selected_channel = icp_raw.get("recommended_channel")
-        if not selected_channel:
-            selected_channel = decide_channel_with_rules(classification, icp_raw)
-            
-        reasoning = icp_raw.get("channel_reasoning") or get_channel_reasoning(classification, icp_raw, selected_channel)
+        # 2. Decide channel
+        selected_channel = decide_channel_with_rules(classification, icp_raw)
+        reasoning = get_channel_reasoning(classification, icp_raw, selected_channel)
 
         # 3. Generate content
         tone = decide_tone(classification.get("urgency", "Medium"), icp_raw.get("priority", "Medium"))
@@ -243,36 +240,61 @@ def process_single_icp(classification_transformed, icp_raw, rank, user_input):
         except Exception:
             generated_content = _fallback_content(selected_channel, icp_raw, classification)
 
-        # 4. Transform to frontend format with EXPLICIT channel override
-        # We must package our decided channel into the "raw_result" structure 
-        # so the transformer picks it up correctly
-        synth_result = {
-            "classification": classification,
-            "icp": icp_raw,
-            "selected_channel": selected_channel,  # <--- CRITICAL: Pass the decision
-            "channel_reasoning": reasoning,        # <--- CRITICAL: Pass the reason
-            "generated_content": generated_content
+        # 4. Transform to frontend format
+        icp_transformed = {
+            "name": icp_raw.get("name", ""),
+            "company": icp_raw.get("company", ""),
+            "email": icp_raw.get("email", ""),
+            "engagementScore": icp_raw.get("engagement_score", 0),
+            "priorityLevel": icp_raw.get("priority", "Medium"),
+            "similarityConfidence": icp_raw.get("match_score", 0),
+            "rank": rank,
         }
-        
-        
-        final_result = transform_workflow_result(synth_result)
-        
-        # 5. Auto-send email
+
+        execution = {}
         if selected_channel == "Email":
+            execution = {
+                "type": "Email",
+                "subject": generated_content.get("subject", "Outreach"),
+                "body": generated_content.get("body", ""),
+                "cta": generated_content.get("cta", "Send Email")
+            }
+        elif selected_channel == "Call":
+            script_parts = []
+            for key in ["opening_line", "rapport_building", "problem_exploration", "value_pitch", "closing_cta"]:
+                if generated_content.get(key):
+                    script_parts.append(f"{key.replace('_', ' ').capitalize()}: {generated_content[key]}")
+            
+            execution = {
+                "type": "Call",
+                "script": "\n\n".join(script_parts) or "Call script generated.",
+                "keyPoints": [generated_content.get("objection_handling", "Listen to prospect needs.")]
+            }
+        else: # LinkedIn
+            execution = {
+                "type": "LinkedIn",
+                "connectionMessage": generated_content.get("connectionMessage", ""),
+                "followUpMessage": generated_content.get("followUpMessage", "")
+            }
+
+        result = {
+            "classification": classification_transformed,
+            "icp": icp_transformed,
+            "channel": {"selected": selected_channel, "reasoning": reasoning},
+            "execution": execution,
+            "status": "Sent"
+        }
+
+        # 5. Auto-send email
+        if selected_channel == "Email" and execution.get("body"):
             try:
-                execution = final_result.get("execution", {})
-                # Force send to default email for testing/demo purposes
-                recipient = DEFAULT_TO_EMAIL 
-                # recipient = icp_raw.get("email") or DEFAULT_TO_EMAIL # <-- Old logic disabled for safety/testing
-                
-                if execution.get("body"):
-                    _auto_send_email(recipient, execution["subject"], execution["body"])
-                    final_result["emailAutoSent"] = True
+                recipient = icp_transformed.get("email") or DEFAULT_TO_EMAIL
+                _auto_send_email(recipient, execution["subject"], execution["body"])
+                result["emailAutoSent"] = True
             except Exception as e:
-                print(f"Auto-send failed for {icp_raw.get('name')}: {e}")
+                print(f"Auto-send failed for {icp_transformed['name']}: {e}")
 
-        return final_result
-
+        return result
     except Exception as e:
         print(f"Error processing ICP {icp_raw.get('name')}: {e}")
         return None
@@ -441,10 +463,7 @@ def send_email():
     """
     try:
         data = request.get_json() or {}
-        # Force all emails to test address
-        to_addr = DEFAULT_TO_EMAIL 
-        # to_addr = data.get("to", "").strip() or DUMMY_TO_EMAIL
-
+        to_addr = data.get("to", "").strip() or DUMMY_TO_EMAIL
         subject = data.get("subject", "").strip()
         body = data.get("body", "").strip()
 

@@ -22,47 +22,47 @@ def decide_channel_with_rules(classification, icp):
     # ==========================================
     # PRIORITY 1: URGENCY (First Constraint)
     # ==========================================
-    if urgency in ["immediate", "immediately", "high", "urgent"]:
+    # Immediate/High urgency → Always Call (time-sensitive, direct)
+    if urgency in ["immediate", "high"]:
         return "Call"
     
     # ==========================================
-    # PRIORITY 2: INTENT-BASED OVERRIDE (Soft Approach)
+    # PRIORITY 2: ENGAGEMENT SCORE (Second Constraint)
     # ==========================================
-    # If the user explicitly wants to explore/research, stay on LinkedIn
-    # regardless of engagement score (calling a researcher is intrusive)
-    is_exploratory = "exploratory" in business_behavior or "research" in str(classification.get("user_intent", "")).lower()
-    if is_exploratory:
-        return "LinkedIn"
-
-    # ==========================================
-    # PRIORITY 3: HIGH-VALUE LEADS (Top Tier)
-    # ==========================================
-    # Very high engagement deserves a direct call
-    if engagement_score >= 90:
-        return "Call"
-    
-    # ==========================================
-    # PRIORITY 4: STANDARD ENGAGEMENT
-    # ==========================================
-    # High engagement (80-89) → Email (personalized outreach)
-    if engagement_score >= 80:
+    # High engagement (≥75) → Email (they're interested, personalized outreach)
+    if engagement_score >= 75:
         return "Email"
     
-    # Low engagement (<50) → LinkedIn (soft, non-intrusive approach)
-    if engagement_score < 50:
+    # Low engagement (<40) → LinkedIn (soft, non-intrusive approach)
+    if engagement_score < 40:
         return "LinkedIn"
     
     # ==========================================
-    # PRIORITY 5: ICP PRIORITY & BEHAVIOR
+    # PRIORITY 3: ICP PRIORITY LEVEL (Third Constraint)
     # ==========================================
-    # Medium engagement (50-79) → Check Priority
+    # Medium engagement (40-74) → Check ICP Priority
+    if icp_priority == "high":
+        return "Email"  # High priority ICP → Email (worth personalized effort)
+    
     if icp_priority == "low":
-        return "LinkedIn"
+        return "LinkedIn"  # Low priority ICP → LinkedIn (exploratory)
     
-    if icp_priority == "high" or "active" in business_behavior:
-        return "Email"
+    # ==========================================
+    # PRIORITY 4: BUSINESS BEHAVIOR (Fourth Constraint)
+    # ==========================================
+    # Medium engagement + Medium priority → Check behavior
+    active_keywords = ["active", "urgent", "hiring", "expansion", "scaling", "immediate"]
+    exploratory_keywords = ["exploring", "exploratory", "interested", "future", "considering"]
     
-    # Default fallback
+    if any(keyword in business_behavior for keyword in active_keywords):
+        return "Email"  # Active behavior → Email
+    
+    if any(keyword in business_behavior for keyword in exploratory_keywords):
+        return "LinkedIn"  # Exploratory → LinkedIn
+    
+    # ==========================================
+    # DEFAULT: Email (most professional and scalable)
+    # ==========================================
     return "Email"
 
 
@@ -162,20 +162,7 @@ def platform_decision_agent(state):
         return {**state}
 
     for icp in icps:
-        # 1. Check rules first for deterministic overrides (like Urgency)
-        rule_channel = decide_channel_with_rules(classification, icp)
-        
-        # 2. If rules say "Call", it's likely due to Urgency or High Engagement - prioritize this
-        if rule_channel == "Call":
-            selected_channel = "Call"
-        else:
-            # 3. Otherwise, use LLM for decision for better variety
-            selected_channel = decide_channel_with_llm(classification, icp)
-            
-            # Double check validity
-            if selected_channel not in ["Email", "LinkedIn", "Call"]:
-                selected_channel = rule_channel
-            
+        selected_channel = decide_channel_with_rules(classification, icp)
         icp["recommended_channel"] = selected_channel
         icp["channel_reasoning"] = get_channel_reasoning(classification, icp, selected_channel)
 

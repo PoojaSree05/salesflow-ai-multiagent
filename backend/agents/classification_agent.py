@@ -119,28 +119,20 @@ def fallback_extraction(user_input):
             break
 
     # 🔹 Urgency detection
-    urgency = "Medium"
-    # Use fuzzy/regex style check for 'immediate' variants and typos
-    immediate_pattern = r"im{1,2}edi[at]{1,3}ly|im{1,2}ediately|im{1,2}diately|urgent|asap|at once"
-    if re.search(immediate_pattern, text) or any(word in text for word in ["now", "right now"]):
+    if any(word in text for word in ["urgent", "immediately", "asap", "right now"]):
         urgency = "Immediate"
-    elif any(word in text for word in ["soon", "quickly", "this week", "short term"]):
+    elif any(word in text for word in ["soon", "quickly", "this week"]):
         urgency = "High"
-    elif any(word in text for word in ["low priority", "later", "eventually", "next month"]):
+    elif any(word in text for word in ["low priority", "later"]):
         urgency = "Low"
 
     # 🔹 Intent detection
-    behavior = ""
-    if urgency == "Immediate" or any(word in text for word in ["hire", "hiring", "need"]):
+    if any(word in text for word in ["hire", "hiring", "need"]):
         intent = "Hiring intent"
-        behavior = "active"
-    elif any(word in text for word in ["research", "exploring", "looking", "explore"]):
+    elif any(word in text for word in ["research", "exploring", "looking"]):
         intent = "Researching solutions"
-        behavior = "exploratory"
     elif role:
         intent = "Looking for contact"
-    else:
-        intent = ""
 
     return {
         "role": role,
@@ -148,7 +140,7 @@ def fallback_extraction(user_input):
         "industry": industry,
         "urgency": urgency,
         "time_context": "",
-        "business_behavior": behavior,
+        "business_behavior": "",
         "user_intent": intent
     }
 
@@ -197,25 +189,12 @@ Rules:
         if not classification_data:
             classification_data = fallback_extraction(user_input)
 
-        # If role missing or data looks incomplete → merge with fallback
-        fallback_data = fallback_extraction(user_input)
-        
+        # If role missing → fallback role only
         if not classification_data.get("role"):
+            fallback_data = fallback_extraction(user_input)
             classification_data["role"] = fallback_data["role"]
-        if not classification_data.get("location"):
             classification_data["location"] = fallback_data["location"]
-        if not classification_data.get("industry"):
             classification_data["industry"] = fallback_data["industry"]
-        
-        # Always prioritize fallback for Urgency and Behavior since we have specific regex/logic for them
-        if not classification_data.get("urgency") or classification_data.get("urgency") == "":
-             classification_data["urgency"] = fallback_data["urgency"]
-        
-        if not classification_data.get("business_behavior") or classification_data.get("business_behavior") == "":
-             classification_data["business_behavior"] = fallback_data["business_behavior"]
-
-        if not classification_data.get("user_intent") or classification_data.get("user_intent") == "":
-             classification_data["user_intent"] = fallback_data["user_intent"]
 
         return {"classification": classification_data}
 
