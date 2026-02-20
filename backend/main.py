@@ -16,13 +16,38 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime
 from graph.workflow import app
+from agents.platform_agent import decide_channel_with_rules, get_channel_reasoning
+from agents.content_agent import decide_tone, _build_email_prompt, _build_linkedin_prompt, _build_call_prompt, _fallback_content
+from llm import call_llm
+from utils import safe_json_parse
 
 flask_app = Flask(__name__)
 CORS(flask_app)
 
+# Store campaign history in memory for this session
+CAMPAIGNS = [
+    {
+        "created_at": "2026-02-19T10:00:00.000000",
+        "status": "Sent",
+        "classification": {"role": "HR Manager", "location": "London", "urgency": "High", "intent": "Hiring", "businessBehavior": "Professional"},
+        "icp": {"name": "Sallee Kilbey", "company": "Vidoo", "email": "skilbey@vidoo.com", "engagementScore": 85, "priorityLevel": "High", "similarityConfidence": 98.5, "rank": 1},
+        "channel": {"selected": "Email", "reasoning": "High engagement score and urgency signals."},
+        "execution": {"type": "Email", "subject": "Talent acquisition strategy for Vidoo", "body": "Hi Sallee,\n\nI noticed Vidoo is expanding its EdTech presence in London. We have some interesting insights on talent retention for growing teams.\n\nBest,\nSalesFlow AI", "cta": "Schedule a call"}
+    },
+    {
+        "created_at": "2026-02-19T11:00:00.000000",
+        "status": "Sent",
+        "classification": {"role": "CTO", "location": "Singapore", "urgency": "Medium", "intent": "Scaling", "businessBehavior": "Technical"},
+        "icp": {"name": "Isidore Bardell", "company": "Jaxworks", "email": "ibardell@jaxworks.com", "engagementScore": 75, "priorityLevel": "High", "similarityConfidence": 85.0, "rank": 1},
+        "channel": {"selected": "Call", "reasoning": "Technical profile, direct outreach preferred for high-value accounts."},
+        "execution": {"type": "Call", "script": "Intro: Hello Isidore, I'm calling from SalesFlow AI. I saw your recent infrastructure updates at Jaxworks...\nValue: We help fintechs in Singapore scale their AI pipelines...", "keyPoints": ["AI scaling efficiency", "Regional compliance"]}
+    }
+]
+
 # Default email for dummy/send - to: recipient, from: sender
-DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "pcoswomenscare@gmail.com")
+DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "prospect@example.com")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "salesflow.aiteam@gmail.com")
 
 # Fallback when workflow/LLM fails - no external deps
@@ -171,54 +196,196 @@ def transform_workflow_result(raw_result):
             "classification": classification,
             "icp": icp,
             "channel": channel,
+            "channel_reasoning": channel_reasoning,
             "execution": execution
         }
     except Exception as e:
         print(f"Transform error: {e}")
         return raw_result
 
+def process_single_icp(classification_transformed, icp_raw, rank, user_input):
+    """
+    Process a single ICP: decide channel, generate content, and execute.
+    Returns a transformed StrategyResult.
+    """
+    try:
+        # 1. Map classification to match agents' expected input (they expect snake_case mostly)
+        classification = {
+            "role": classification_transformed.get("role"),
+            "location": classification_transformed.get("location"),
+            "urgency": classification_transformed.get("urgency"),
+            "business_behavior": classification_transformed.get("businessBehavior"),
+            "intent": classification_transformed.get("intent"),
+            "user_intent": classification_transformed.get("intent")
+        }
+
+        # 2. Decide channel
+        selected_channel = decide_channel_with_rules(classification, icp_raw)
+        reasoning = get_channel_reasoning(classification, icp_raw, selected_channel)
+
+        # 3. Generate content
+        tone = decide_tone(classification.get("urgency", "Medium"), icp_raw.get("priority", "Medium"))
+        
+        generated_content = {}
+        try:
+            if selected_channel == "Email":
+                prompt = _build_email_prompt(classification, icp_raw, tone)
+            elif selected_channel == "LinkedIn":
+                prompt = _build_linkedin_prompt(classification, icp_raw, tone)
+            else:
+                prompt = _build_call_prompt(classification, icp_raw, tone)
+            
+            response = call_llm(prompt)
+            generated_content = safe_json_parse(response) or _fallback_content(selected_channel, icp_raw, classification)
+        except Exception:
+            generated_content = _fallback_content(selected_channel, icp_raw, classification)
+
+        # 4. Transform to frontend format
+        icp_transformed = {
+            "name": icp_raw.get("name", ""),
+            "company": icp_raw.get("company", ""),
+            "email": icp_raw.get("email", ""),
+            "engagementScore": icp_raw.get("engagement_score", 0),
+            "priorityLevel": icp_raw.get("priority", "Medium"),
+            "similarityConfidence": icp_raw.get("match_score", 0),
+            "rank": rank,
+        }
+
+        execution = {}
+        if selected_channel == "Email":
+            execution = {
+                "type": "Email",
+                "subject": generated_content.get("subject", "Outreach"),
+                "body": generated_content.get("body", ""),
+                "cta": generated_content.get("cta", "Send Email")
+            }
+        elif selected_channel == "Call":
+            script_parts = []
+            for key in ["opening_line", "rapport_building", "problem_exploration", "value_pitch", "closing_cta"]:
+                if generated_content.get(key):
+                    script_parts.append(f"{key.replace('_', ' ').capitalize()}: {generated_content[key]}")
+            
+            execution = {
+                "type": "Call",
+                "script": "\n\n".join(script_parts) or "Call script generated.",
+                "keyPoints": [generated_content.get("objection_handling", "Listen to prospect needs.")]
+            }
+        else: # LinkedIn
+            execution = {
+                "type": "LinkedIn",
+                "connectionMessage": generated_content.get("connectionMessage", ""),
+                "followUpMessage": generated_content.get("followUpMessage", "")
+            }
+
+        result = {
+            "classification": classification_transformed,
+            "icp": icp_transformed,
+            "channel": {"selected": selected_channel, "reasoning": reasoning},
+            "execution": execution,
+            "status": "Sent"
+        }
+
+        # 5. Auto-send email
+        if selected_channel == "Email" and execution.get("body"):
+            try:
+                recipient = icp_transformed.get("email") or DEFAULT_TO_EMAIL
+                _auto_send_email(recipient, execution["subject"], execution["body"])
+                result["emailAutoSent"] = True
+            except Exception as e:
+                print(f"Auto-send failed for {icp_transformed['name']}: {e}")
+
+        return result
+    except Exception as e:
+        print(f"Error processing ICP {icp_raw.get('name')}: {e}")
+        return None
+
 @flask_app.route("/run-strategy", methods=["POST"])
 def run_strategy():
     """Accept user input from frontend and run the agent workflow"""
     data = request.get_json() or {}
     user_input = (data.get("input") or "").strip()
+    campaign_mode = data.get("campaignMode", "single") 
+
     if not user_input:
         return jsonify({"error": "No input provided"}), 400
 
     try:
+        # 1. Run core workflow to get classification and ICP rankings
         raw_result = app.invoke({"user_input": user_input})
     except Exception as e:
         print(f"Workflow failed, using fallback: {e}")
         raw_result = run_fallback_strategy(user_input)
 
     try:
-        transformed_result = transform_workflow_result(raw_result)
-        # Auto-send email when channel is Email (helpful for presentation)
-        exec_data = transformed_result.get("execution", {})
-        if exec_data.get("type") == "Email" and exec_data.get("subject") and exec_data.get("body"):
-            try:
-                _auto_send_email(
-                    to_addr=DEFAULT_TO_EMAIL,
-                    subject=exec_data["subject"],
-                    body=exec_data["body"],
-                )
-                transformed_result["emailAutoSent"] = True
-            except Exception as e:
-                print(f"Auto-send email (non-blocking): {e}")
-        return jsonify(transformed_result), 200
+        # Extract classification (once for all ICPs)
+        raw_class = raw_result.get("classification", {})
+        classification_transformed = {
+            "role": raw_class.get("role", ""),
+            "location": raw_class.get("location", ""),
+            "urgency": raw_class.get("urgency", "Medium"),
+            "intent": raw_class.get("user_intent", raw_class.get("intent", "Outreach")),
+            "businessBehavior": raw_class.get("business_behavior", raw_class.get("businessBehavior", "")),
+        }
+
+        icp_rankings = raw_result.get("icp_rankings", [])
+        if not icp_rankings:
+            return jsonify({"error": "No matching ICPs found"}), 404
+
+        if campaign_mode == "multi":
+            # Multi-ICP Mode: Top 5
+            selected_icps = icp_rankings[:5]
+            campaign_results = []
+            success_count = 0
+            failed_count = 0
+
+            for i, icp_raw in enumerate(selected_icps):
+                res = process_single_icp(classification_transformed, icp_raw, i + 1, user_input)
+                if res:
+                    res["created_at"] = datetime.now().isoformat()
+                    campaign_results.append(res)
+                    CAMPAIGNS.append(res)
+                    success_count += 1
+                else:
+                    failed_count += 1
+            
+            return jsonify({
+                "total_sent": len(campaign_results),
+                "success_count": success_count,
+                "failed_count": failed_count,
+                "campaigns": campaign_results,
+                # For frontend UI consistency during animation, we also return the first one as top-level result
+                **campaign_results[0] 
+            }), 200
+        else:
+            # Single Target Mode (Default)
+            top_result = process_single_icp(classification_transformed, icp_rankings[0], 1, user_input)
+            if not top_result:
+                raise Exception("Failed to process top ICP")
+                
+            top_result["created_at"] = datetime.now().isoformat()
+            CAMPAIGNS.append(top_result)
+            return jsonify(top_result), 200
+
     except Exception as e:
-        print(f"Transform failed: {e}")
-        raw_result = run_fallback_strategy(user_input)
+        print(f"Process failed: {e}")
+        # Final fallback - simple transformation of whatever we have
         transformed_result = transform_workflow_result(raw_result)
-        # Auto-send on fallback path too
-        exec_data = transformed_result.get("execution", {})
-        if exec_data.get("type") == "Email" and exec_data.get("subject") and exec_data.get("body"):
-            try:
-                _auto_send_email(DEFAULT_TO_EMAIL, exec_data["subject"], exec_data["body"])
-                transformed_result["emailAutoSent"] = True
-            except Exception:
-                pass
+        transformed_result["created_at"] = datetime.now().isoformat()
+        transformed_result["status"] = "Sent"
+        CAMPAIGNS.append(transformed_result)
         return jsonify(transformed_result), 200
+
+
+@flask_app.route("/campaigns", methods=["GET"])
+def get_campaigns():
+    """Return campaign history sorted by most recent (created_at descending)"""
+    # Sort CAMPAIGNS by created_at in descending order
+    sorted_campaigns = sorted(
+        CAMPAIGNS, 
+        key=lambda x: x.get("created_at", ""), 
+        reverse=True
+    )
+    return jsonify(sorted_campaigns), 200
 
 
 # Email configuration (matches default send targets)

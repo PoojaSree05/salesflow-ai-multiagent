@@ -14,7 +14,7 @@ def decide_channel_with_rules(classification, icp):
     Default: Email (most professional and scalable)
     """
     # Extract all decision factors (support both snake_case and camelCase from different sources)
-    urgency = str(classification.get("urgency", "Medium")).lower()
+    urgency = str(classification.get("urgency") or "").lower()
     engagement_score = int(icp.get("engagement_score", 50))
     icp_priority = str(icp.get("priority", "Medium")).lower()
     business_behavior = str(classification.get("business_behavior") or classification.get("businessBehavior", "")).lower()
@@ -110,28 +110,49 @@ Call, Email, or LinkedIn
 
 
 def get_channel_reasoning(classification, icp, selected_channel):
-    """
-    Generate human-readable reasoning for channel selection.
-    """
-    urgency = str(classification.get("urgency", "Medium"))
+    urgency = str(classification.get("urgency") or "").lower()
     engagement_score = int(icp.get("engagement_score", 50))
     icp_priority = str(icp.get("priority", "Medium"))
-    
-    if selected_channel == "Call":
-        return f"Selected Call due to {urgency} urgency - requires immediate, direct communication."
-    elif selected_channel == "Email":
-        if engagement_score >= 75:
-            return f"Selected Email due to high engagement score ({engagement_score}) - personalized outreach recommended."
-        elif icp_priority.lower() == "high":
-            return f"Selected Email due to high ICP priority and medium engagement ({engagement_score}) - worth personalized effort."
-        else:
-            return f"Selected Email as default professional channel (engagement: {engagement_score}, priority: {icp_priority})."
-    else:  # LinkedIn
-        if engagement_score < 40:
-            return f"Selected LinkedIn due to low engagement score ({engagement_score}) - soft, exploratory approach preferred."
-        else:
-            return f"Selected LinkedIn due to exploratory business behavior and medium engagement ({engagement_score})."
+    business_behavior = str(classification.get("business_behavior") or "").lower()
 
+    reason_parts = []
+
+    # 🔹 Urgency explanation
+    if urgency in ["immediate", "high"]:
+        reason_parts.append(
+            f"You indicated urgency ('{urgency}'), suggesting time-sensitive action."
+        )
+
+    # 🔹 Engagement explanation
+    if engagement_score >= 75:
+        reason_parts.append(
+            f"The lead has a strong engagement score ({engagement_score}), showing high interest."
+        )
+    elif engagement_score < 40:
+        reason_parts.append(
+            f"The engagement score is low ({engagement_score}), indicating early-stage interest."
+        )
+    else:
+        reason_parts.append(
+            f"The engagement score is moderate ({engagement_score})."
+        )
+
+    # 🔹 ICP Priority explanation
+    reason_parts.append(
+        f"This prospect is classified as {icp_priority} priority."
+    )
+
+    # 🔹 Final recommendation sentence
+    if selected_channel == "Call":
+        conclusion = "Therefore, a direct call is recommended to act quickly."
+    elif selected_channel == "Email":
+        conclusion = "Therefore, sending a personalized email is the most effective approach."
+    else:  # LinkedIn
+        conclusion = "Therefore, a LinkedIn message is recommended as a softer outreach strategy."
+
+    full_reason = " ".join(reason_parts) + " " + conclusion
+
+    return full_reason
 
 def platform_decision_agent(state):
     classification = state.get("classification", {})
