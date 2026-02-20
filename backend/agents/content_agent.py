@@ -46,25 +46,39 @@ Return STRICT JSON only:
 
 
 def _build_linkedin_prompt(classification: Dict, icp: Dict, tone: str) -> str:
-    return f"""You are a B2B LinkedIn outreach specialist. Create a connection strategy.
-
-{_base_context(classification, icp)}
-Tone: {tone}
-
-Return STRICT JSON only:
-{{"connectionMessage": "Initial connection request under 100 words", "followUpMessage": "Follow-up message after connection"}}
-"""
+    return f"""You are a B2B LinkedIn outreach specialist. Create a highly personalized connection strategy.
+    
+    GUIDELINES:
+    - Reference prospect name ({icp.get('name', '')}) and company ({icp.get('company', '')})
+    - Mention their specific role ({icp.get('role', '')}) and industry context ({icp.get('industry', '')})
+    - Reference business behavior/intent: {classification.get('business_behavior') or classification.get('businessBehavior', '')}
+    - Keep it consultative, conversational, and non-robotic.
+    - No robotic templates.
+    
+    {_base_context(classification, icp)}
+    Tone: {tone}
+    
+    Return STRICT JSON only:
+    {{"connectionMessage": "Initial connection request under 100 words", "followUpMessage": "Follow-up message after connection"}}
+    """
 
 
 def _build_call_prompt(classification: Dict, icp: Dict, tone: str) -> str:
-    return f"""You are a B2B sales expert. Generate a structured call script.
-
-{_base_context(classification, icp)}
-Tone: {tone}
-
-Return STRICT JSON only:
-{{"opening_line": "", "rapport_building": "", "problem_exploration": "", "value_pitch": "", "objection_handling": "", "closing_cta": ""}}
-"""
+    return f"""You are a B2B sales expert. Generate a highly personalized and structured call script.
+    
+    GUIDELINES:
+    - Must include prospect name ({icp.get('name', '')}) and company ({icp.get('company', '')})
+    - Reference role-specific pain points for a {icp.get('role', '')}
+    - Include an industry-specific hook for {icp.get('industry', '')}
+    - Map value proposition to user intent: {classification.get('user_intent') or classification.get('intent', '')}
+    - End with a strong engagement question.
+    
+    {_base_context(classification, icp)}
+    Tone: {tone}
+    
+    Return STRICT JSON only:
+    {{"opening_line": "Opening line with name/company", "rapport_building": "Personalized context reference", "problem_exploration": "Role-specific pain point hook", "value_pitch": "Highly personalized value prop", "objection_handling": "Context-aware response", "closing_cta": "Strong closing question"}}
+    """
 
 
 def _fallback_content(channel: str, icp: Dict, classification: Dict) -> Dict:
