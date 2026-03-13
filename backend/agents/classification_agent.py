@@ -119,7 +119,8 @@ def fallback_extraction(user_input):
             break
 
     # 🔹 Urgency detection
-    if any(word in text for word in ["urgent", "immediately", "asap", "right now"]):
+    urgency = "Medium"
+    if any(word in text for word in ["urgent", "immediately", "asap", "right now", "immediate"]):
         urgency = "Immediate"
     elif any(word in text for word in ["soon", "quickly", "this week"]):
         urgency = "High"
@@ -134,6 +135,9 @@ def fallback_extraction(user_input):
     elif role:
         intent = "Looking for contact"
 
+    # 🔹 ICP Match logic
+    icp_match = True if (role or location or industry) else False
+
     return {
         "role": role,
         "location": location,
@@ -141,7 +145,8 @@ def fallback_extraction(user_input):
         "urgency": urgency,
         "time_context": "",
         "business_behavior": "",
-        "user_intent": intent
+        "user_intent": intent,
+        "icp_match": icp_match
     }
 
 
@@ -171,13 +176,15 @@ Return ONLY JSON:
  "urgency": "",
  "time_context": "",
  "business_behavior": "",
- "user_intent": ""
+ "user_intent": "",
+ "icp_match": true/false
 }}
  
 Rules:
 - Role = job title mentioned
 - Location = city only
 - Urgency = Low | Medium | High | Immediate
+- icp_match = true if the request contains specific targeting (role, location, or industry), else false.
 - If not present use ""
 """
 
@@ -195,6 +202,12 @@ Rules:
             classification_data["role"] = fallback_data["role"]
             classification_data["location"] = fallback_data["location"]
             classification_data["industry"] = fallback_data["industry"]
+            if "icp_match" not in classification_data:
+                classification_data["icp_match"] = fallback_data["icp_match"]
+
+        # Final check for icp_match
+        if "icp_match" not in classification_data:
+            classification_data["icp_match"] = True if (classification_data.get("role") or classification_data.get("location")) else False
 
         return {"classification": classification_data}
 

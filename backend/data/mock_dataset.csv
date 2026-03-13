@@ -58,3 +58,103 @@ id,name,role,company,industry,location,company_size,revenue_band,engagement_scor
 48,Gratiana Attreed,HR Business Partner,Oyope,E-commerce,Singapore,200-500,10M-50M,62,Talent Engagement,gattreed@oyope.com,,684-889-3235
 49,Gayle Dulwitch,Marketing Head,Realblab,Cybersecurity,Berlin,200-500,10M-50M,71,Brand Awareness,gdulwitch@realblab.com,,872-705-1439
 50,Xenos Diano,Product Manager,JumpXS,Cybersecurity,New York,500+,50M+,55,Product Growth,xdiano@jumpxs.com,,771-768-7935
+51,Alfred Dsouza,CTO,Cloudspire,SaaS,London,200-500,50M+,91,Platform Scaling,adsouza@cloudspire.com,https://linkedin.com/in/alfreddsouza,742-555-1201
+52,Nisha Kapoor,Marketing Head,Finastrax,Fintech,Mumbai,500+,50M+,87,Brand Expansion,nkapoor@finastrax.com,https://linkedin.com/in/nishakapoor,742-555-1202
+53,Rahul Menon,Founder,Scalegrid,AI,Singapore,50-200,10M-50M,78,Growth Strategy,rmenon@scalegrid.com,https://linkedin.com/in/rahulmenon,742-555-1203
+54,Daniel Smith,Operations Manager,Optivance,Manufacturing,Berlin,200-500,10M-50M,66,Process Optimization,dsmith@optivance.com,,742-555-1204
+55,Sarah Lee,HR Manager,Edulabs,EdTech,New York,50-200,10M-50M,82,Talent Retention,slee@edulabs.com,https://linkedin.com/in/sarahlee,742-555-1205
+56,Arjun Rao,Sales Director,Paynix,Fintech,London,500+,50M+,95,Enterprise Sales,arao@paynix.com,https://linkedin.com/in/arjunrao,742-555-1206
+57,Meera Iyer,Finance Manager,Medcore,Healthcare,Mumbai,200-500,50M+,73,Cost Management,miyer@medcore.com,,742-555-1207
+58,Lucas Meyer,CTO,Securebyte,Cybersecurity,Berlin,500+,50M+,89,Security Scaling,lmeyer@securebyte.com,https://linkedin.com/in/lucasmeyer,742-555-1208
+59,Emma Johnson,Product Manager,Marketloop,E-commerce,New York,200-500,10M-50M,64,Product Expansion,ejohnson@marketloop.com,,742-555-1209
+60,Vikram Shah,Founder,Innoventix,AI,Singapore,Jan-50,1M-10M,76,Startup Scaling,vshah@innoventix.com,https://linkedin.com/in/vikramshah,742-555-1210
+61,Olivia Brown,Marketing Head,Brandaxis,SaaS,London,50-200,10M-50M,92,Lead Generation,obrown@brandaxis.com,https://linkedin.com/in/oliviabrown,742-555-1211
+62,Aditya Verma,Operations Manager,Autochain,Manufacturing,Mumbai,500+,50M+,70,Operational Efficiency,averma@autochain.com,,742-555-1212
+63,Sophia Turner,HR Business Partner,Talentbridge,EdTech,New York,200-500,10M-50M,88,Talent Strategy,sturner@talentbridge.com,https://linkedin.com/in/sophiaturner,742-555-1213
+64,Noah Wilson,CTO,Datafort,Cybersecurity,Berlin,200-500,50M+,83,Infrastructure Upgrade,nwilson@datafort.com,,742-555-1214
+65,Ishita Nair,Sales Director,HealthifyPro,Healthcare,Singapore,500+,50M+,97,Revenue Growth,inaire@healthifypro.com,https://linkedin.com/in/ishitanair,742-555-1215
+66,Liam Martin,Product Manager,Cloudzen,SaaS,London,50-200,10M-50M,58,Feature Expansion,lmartin@cloudzen.com,,742-555-1216
+67,Aarav Khanna,Founder,Finpulse,Fintech,Mumbai,200-500,50M+,84,Expansion Strategy,akhanna@finpulse.com,https://linkedin.com/in/aaravkhanna,742-555-1217
+68,Chloe White,Marketing Head,Ecomsphere,E-commerce,New York,500+,50M+,90,Customer Acquisition,cwhite@ecomsphere.com,https://linkedin.com/in/chloewhite,742-555-1218
+69,Ethan Clark,Finance Manager,Buildmax,Manufacturing,Berlin,50-200,10M-50M,61,Financial Planning,eclark@buildmax.com,,742-555-1219
+70,Priya Ramesh,CTO,Neurolytics,AI,Singapore,500+,50M+,94,AI Infrastructure,pramesh@neurolytics.com,https://linkedin.com/in/priyaramesh,742-555-1220
+71,Harsh Patel,Operations Manager,Logisync,Manufacturing,London,200-500,10M-50M,72,Process Automation,hpatel@logisync.com,,742-555-1221
+72,Ava Thompson,HR Manager,Skillverse,EdTech,New York,50-200,10M-50M,86,Talent Acquisition,athompson@skillverse.com,https://linkedin.com/in/avathompson,742-555-1222
+73,Rohan Sethi,CTO,QuantiveAI,AI,Singapore,500+,50M+,93,Platform Architecture,rsethi@quantiveai.com,https://linkedin.com/in/rohansethi,742-555-1223
+74,Isabella Moore,Marketing Head,Shopfinity,E-commerce,Berlin,200-500,50M+,88,Brand Leadership,imoore@shopfinity.com,https://linkedin.com/in/isabellamoore,742-555-1224
+75,Karthik Iyer,Sales Director,Finverse,Fintech,Mumbai,500+,50M+,96,Enterprise Growth,kiyer@finverse.com,https://linkedin.com/in/karthikiyer,742-555-1225
+76,Grace Walker,Finance Manager,Medisphere,Healthcare,London,200-500,50M+,67,Cost Optimization,gwalker@medisphere.com,,742-555-1226
+77,Arnav Malhotra,Founder,Cybernova,Cybersecurity,Singapore,50-200,10M-50M,81,Security Expansion,amalhotra@cybernova.com,https://linkedin.com/in/arnavmalhotra,742-555-1227
+78,Mia Robinson,Product Manager,Edvanta,EdTech,New York,200-500,10M-50M,63,Product Scaling,mrobinson@edvanta.com,,742-555-1228
+79,Dev Sharma,CTO,Cloudmetric,SaaS,Mumbai,500+,50M+,90,Infrastructure Scaling,dsharma@cloudmetric.com,https://linkedin.com/in/devsharma,742-555-1229
+80,Charlotte Hall,Marketing Head,Brandloop,SaaS,Berlin,50-200,10M-50M,75,Lead Generation,chall@brandloop.com,,742-555-1230
+81,Neil Kapoor,Operations Manager,Autozen,Manufacturing,London,200-500,10M-50M,59,Operational Efficiency,nkapoor@autozen.com,,742-555-1231
+82,Ananya Desai,HR Business Partner,Peoplecore,Healthcare,Singapore,500+,50M+,92,Workforce Optimization,adesai@peoplecore.com,https://linkedin.com/in/ananyadesai,742-555-1232
+83,Benjamin Scott,Founder,Fintegrate,Fintech,New York,50-200,10M-50M,74,Growth Scaling,bscott@fintegrate.com,https://linkedin.com/in/benjaminscott,742-555-1233
+84,Sneha Kulkarni,Finance Manager,Healthbridge,Healthcare,Mumbai,500+,50M+,71,Financial Strategy,skulkarni@healthbridge.com,,742-555-1234
+85,William Young,CTO,Datazen,Cybersecurity,Berlin,200-500,50M+,85,Security Scaling,wyoung@datazen.com,https://linkedin.com/in/williamyoung,742-555-1235
+86,Tanvi Joshi,Sales Director,Shopwave,E-commerce,London,500+,50M+,98,Revenue Expansion,tjoshi@shopwave.com,https://linkedin.com/in/tanvijoshi,742-555-1236
+87,James King,Product Manager,Learnstack,EdTech,New York,50-200,10M-50M,62,Product Optimization,jking@learnstack.com,,742-555-1237
+88,Ritika Bansal,Marketing Head,Finlogic,Fintech,Singapore,200-500,10M-50M,89,Customer Retention,rbansal@finlogic.com,https://linkedin.com/in/ritikabansal,742-555-1238
+89,Henry Adams,Operations Manager,Buildsphere,Manufacturing,Berlin,500+,50M+,69,Process Efficiency,hadams@buildsphere.com,,742-555-1239
+90,Diya Mehta,Founder,Neuraledge,AI,Mumbai,50-200,10M-50M,87,AI Product Scaling,dmehta@neuraledge.com,https://linkedin.com/in/diyamehta,742-555-1240
+91,Alexander Green,CTO,Cloudshift,SaaS,London,500+,50M+,94,Platform Optimization,agreen@cloudshift.com,https://linkedin.com/in/alexandergreen,742-555-1241
+92,Ira Narayanan,Finance Manager,Mediquant,Healthcare,Singapore,200-500,50M+,76,Cost Management,inarayanan@mediquant.com,,742-555-1242
+93,Daniel Cooper,Sales Director,Finpeak,Fintech,New York,500+,50M+,91,Enterprise Sales,dcooper@finpeak.com,https://linkedin.com/in/danielcooper,742-555-1243
+94,Saanvi Gupta,HR Manager,Edunex,EdTech,Mumbai,200-500,10M-50M,83,Talent Development,sgupta@edunex.com,,742-555-1244
+95,Matthew Carter,Marketing Head,Securegrid,Cybersecurity,Berlin,50-200,10M-50M,77,Brand Awareness,mcarter@securegrid.com,https://linkedin.com/in/matthewcarter,742-555-1245
+96,Kavya Reddy,Product Manager,Marketflow,E-commerce,London,500+,50M+,88,Market Expansion,kreddy@marketflow.com,https://linkedin.com/in/kavyareddy,742-555-1246
+97,Oliver Hughes,Founder,Finmatrix,Fintech,Singapore,200-500,50M+,80,Expansion Strategy,ohughes@finmatrix.com,,742-555-1247
+98,Navya Srinivasan,CTO,AIworks,AI,Mumbai,500+,50M+,95,AI Infrastructure,nsrinivasan@aiworks.com,https://linkedin.com/in/navyasrinivasan,742-555-1248
+99,Lucas Bennett,Operations Manager,Buildtech,Manufacturing,New York,200-500,10M-50M,68,Operational Scaling,lbennett@buildtech.com,,742-555-1249
+100,Amelia Wright,Marketing Head,Brandify,SaaS,London,50-200,10M-50M,90,Lead Conversion,awright@brandify.com,https://linkedin.com/in/ameliawright,742-555-1250
+101,Raj Mallick,Sales Director,Finstack,Fintech,Mumbai,500+,50M+,97,Revenue Growth,rmallick@finstack.com,https://linkedin.com/in/rajmallick,742-555-1251
+102,Hannah Brooks,Finance Manager,Medify,Healthcare,Berlin,200-500,50M+,60,Financial Planning,hbrooks@medify.com,,742-555-1252
+103,Arjun Pillai,CTO,Cloudlogic,SaaS,Singapore,500+,50M+,92,System Scaling,apillai@cloudlogic.com,https://linkedin.com/in/arjunpillai,742-555-1253
+104,Emily Carter,HR Business Partner,Learnova,EdTech,London,50-200,10M-50M,84,Talent Strategy,ecarter@learnova.com,https://linkedin.com/in/emilycarter,742-555-1254
+105,Varun Nair,Founder,SecureAI,Cybersecurity,Mumbai,200-500,50M+,86,Security Innovation,vnair@secureai.com,,742-555-1255
+106,Sophia Martinez,Marketing Head,Ecomax,E-commerce,New York,500+,50M+,89,Customer Growth,smartinez@ecomax.com,https://linkedin.com/in/sophiamartinez,742-555-1256
+107,Rishabh Anand,Product Manager,Finware,Fintech,Singapore,200-500,10M-50M,74,Product Innovation,ranand@finware.com,,742-555-1257
+108,Chloe Adams,Finance Manager,Healthplus,Healthcare,London,500+,50M+,71,Cost Reduction,cadams@healthplus.com,,742-555-1258
+109,Advik Jain,CTO,Databridge,SaaS,Berlin,200-500,50M+,93,Infrastructure Upgrade,ajain@databridge.com,https://linkedin.com/in/advikjain,742-555-1259
+110,Lily Evans,Sales Director,Edusmart,EdTech,New York,500+,50M+,96,Enterprise Partnerships,levans@edusmart.com,https://linkedin.com/in/lilyevans,742-555-1260
+111,Rohan Das,Operations Manager,Finaxis,Fintech,Mumbai,200-500,10M-50M,65,Operational Efficiency,rdas@finaxis.com,,742-555-1261
+112,Harper Collins,Marketing Head,Securewave,Cybersecurity,Berlin,50-200,10M-50M,87,Brand Expansion,hcollins@securewave.com,https://linkedin.com/in/harpercollins,742-555-1262
+113,Manav Arora,Founder,AIcraft,AI,Singapore,50-200,10M-50M,82,Startup Scaling,marora@aicraft.com,https://linkedin.com/in/manavarora,742-555-1263
+114,Ella Murphy,Product Manager,Shopline,E-commerce,London,200-500,50M+,69,Product Growth,emurphy@shopline.com,,742-555-1264
+115,Kunal Sinha,Finance Manager,Medline,Healthcare,Mumbai,500+,50M+,73,Financial Scaling,ksinha@medline.com,,742-555-1265
+116,Oscar Reed,CTO,Cloudnet,SaaS,New York,500+,50M+,91,Platform Security,oreed@cloudnet.com,https://linkedin.com/in/oscarreed,742-555-1266
+117,Sara Nair,HR Manager,Edumax,EdTech,Singapore,200-500,10M-50M,85,Talent Engagement,snair@edumax.com,https://linkedin.com/in/saranair,742-555-1267
+118,Leo Turner,Sales Director,Finbridge,Fintech,London,500+,50M+,94,Enterprise Sales,lturner@finbridge.com,https://linkedin.com/in/leoturner,742-555-1268
+119,Aditi Rao,Marketing Head,Ecomflow,E-commerce,Mumbai,50-200,10M-50M,78,Lead Generation,arao@ecomflow.com,,742-555-1269
+120,Jack Mitchell,Operations Manager,Buildcore,Manufacturing,Berlin,500+,50M+,70,Operational Scaling,jmitchell@buildcore.com,,742-555-1270
+121,Michael Tan,StartupLabs,Product Manager,SaaS,London,10-50,1M-10M,34,NO,Exploring,COLD,Product Discovery,mtan@startuplabs.com,https://linkedin.com/in/michaeltan,742-700-1121
+122,Aarohi Singh,FinSphere,Marketing Manager,Fintech,Singapore,5000+,50M+,39,NO,Passive,COLD,Brand Awareness,asingh@finsphere.com,https://linkedin.com/in/aarohisingh,742-700-1122
+123,Daniel Kim,SecureStack,Security Analyst,Cybersecurity,New York,5000+,50M+,42,NO,Exploring,COLD,Threat Monitoring,dkim@securestack.com,https://linkedin.com/in/danielkim,742-700-1123
+124,Emily Wong,HealthNova,HR Executive,Healthcare,London,200-500,10M-50M,36,NO,Passive,COLD,Talent Planning,ewong@healthnova.com,https://linkedin.com/in/emilywong,742-700-1124
+125,Rohan Iyer,CloudNest,Product Owner,AI,Singapore,10-50,1M-10M,31,NO,Exploring,COLD,AI Testing,riyer@cloudnest.com,https://linkedin.com/in/rohaniyer,742-700-1125
+126,Sophia Miller,EcomBridge,Marketing Executive,E-commerce,Berlin,5000+,50M+,40,NO,Passive,COLD,Customer Growth,smiller@ecombridge.com,https://linkedin.com/in/sophiamiller,742-700-1126
+127,Arjun Patel,FinCore,Operations Coordinator,Fintech,Mumbai,5000+,50M+,37,NO,Exploring,COLD,Operational Efficiency,apatel@fincore.com,https://linkedin.com/in/arjunpatel,742-700-1127
+128,Olivia Brown,DataLink,Technical Lead,SaaS,New York,200-500,10M-50M,44,NO,Passive,COLD,System Upgrade,obrown@datalink.com,https://linkedin.com/in/oliviabrown,742-700-1128
+129,Noah Wilson,AIForge,Product Specialist,AI,London,10-50,1M-10M,29,NO,Exploring,COLD,Model Development,nwilson@aiforge.com,https://linkedin.com/in/noahwilson,742-700-1129
+130,Aisha Rahman,SecureNetPro,Security Consultant,Cybersecurity,Singapore,5000+,50M+,35,NO,Passive,COLD,Security Audit,arahman@securenetpro.com,https://linkedin.com/in/aisharahman,742-700-1130
+131,Liam Carter,HealthBridgeX,Finance Analyst,Healthcare,New York,5000+,50M+,33,NO,Exploring,COLD,Cost Optimization,lcarter@healthbridgex.com,https://linkedin.com/in/liamcarter,742-700-1131
+132,Meera Kapoor,CloudAxis,Product Coordinator,SaaS,Mumbai,200-500,10M-50M,41,NO,Passive,COLD,Platform Migration,mkapoor@cloudaxis.com,https://linkedin.com/in/meerakapoor,742-700-1132
+133,Ethan Brooks,FinPeak,Sales Executive,Fintech,London,5000+,50M+,38,NO,Exploring,COLD,Lead Pipeline,ebrooks@finpeak.com,https://linkedin.com/in/ethanbrooks,742-700-1133
+134,Isabella Green,EduSmart,HR Associate,EdTech,Berlin,200-500,10M-50M,30,NO,Passive,COLD,Workforce Planning,igreen@edusmart.com,https://linkedin.com/in/isabellagreen,742-700-1134
+135,Rahul Mehta,AIWorksPro,DevOps Engineer,AI,Singapore,5000+,50M+,42,NO,Exploring,COLD,Infrastructure Setup,rmehta@aiworkspro.com,https://linkedin.com/in/rahulmehta,742-700-1135
+136,Chloe Evans,BrandifyPro,Marketing Analyst,SaaS,London,5000+,50M+,37,NO,Passive,COLD,Lead Generation,cevans@brandifypro.com,https://linkedin.com/in/chloeevans,742-700-1136
+137,Aditya Nair,FinWave,Operations Analyst,Fintech,Mumbai,200-500,10M-50M,39,NO,Exploring,COLD,Process Improvement,anair@finwave.com,https://linkedin.com/in/adityanair,742-700-1137
+138,Sara Mitchell,SecureGrid,Product Analyst,Cybersecurity,New York,5000+,50M+,34,NO,Passive,COLD,Security Tools,smitchell@securegrid.com,https://linkedin.com/in/saramitchell,742-700-1138
+139,Kabir Jain,HealthPlusPro,Finance Associate,Healthcare,Singapore,5000+,50M+,32,NO,Exploring,COLD,Cost Analysis,kjain@healthpluspro.com,https://linkedin.com/in/kabirjain,742-700-1139
+140,Emily Scott,CloudFlow,Technical Manager,SaaS,Berlin,200-500,10M-50M,45,NO,Passive,COLD,System Scaling,escott@cloudflow.com,https://linkedin.com/in/emilyscott,742-700-1140
+141,Daniel Singh,AIShift,Product Executive,AI,London,10-50,1M-10M,28,NO,Exploring,COLD,AI Research,dsingh@aishift.com,https://linkedin.com/in/danielsingh,742-700-1141
+142,Ava Turner,FinBridgeX,Marketing Associate,Fintech,New York,5000+,50M+,36,NO,Passive,COLD,Brand Strategy,aturner@finbridgex.com,https://linkedin.com/in/avaturner,742-700-1142
+143,Rohan Gupta,SecureWavePro,Security Engineer,Cybersecurity,Singapore,5000+,50M+,41,NO,Exploring,COLD,Threat Detection,rgupta@securewavepro.com,https://linkedin.com/in/rohangupta,742-700-1143
+144,Olivia Harris,HealthSphere,HR Coordinator,Healthcare,Mumbai,200-500,10M-50M,35,NO,Passive,COLD,Talent Retention,oharris@healthsphere.com,https://linkedin.com/in/oliviaharris,742-700-1144
+145,James Cooper,CloudEdge,Product Manager,SaaS,London,5000+,50M+,40,NO,Exploring,COLD,Feature Rollout,jcooper@cloudedge.com,https://linkedin.com/in/jamescooper,742-700-1145
+146,Ananya Rao,FinLogicX,Operations Manager,Fintech,Berlin,5000+,50M+,38,NO,Passive,COLD,Process Scaling,arao@finlogicx.com,https://linkedin.com/in/ananyarao,742-700-1146
+147,Lucas Bennett,AIStack,Technical Specialist,AI,New York,10-50,1M-10M,30,NO,Exploring,COLD,Model Deployment,lbennett@aistack.com,https://linkedin.com/in/lucasbennett,742-700-1147
+148,Sneha Kapoor,EcomNext,Marketing Executive,E-commerce,Singapore,5000+,50M+,43,NO,Passive,COLD,Customer Insights,skapoor@ecomnext.com,https://linkedin.com/in/snehakapoor,742-700-1148
+149,Henry Adams,SecureCore,Product Consultant,Cybersecurity,London,200-500,10M-50M,37,NO,Exploring,COLD,Security Integration,hadams@securecore.com,https://linkedin.com/in/henryadams,742-700-1149
+150,Diya Mehta,HealthLinkX,Finance Executive,Healthcare,Mumbai,5000+,50M+,34,NO,Passive,COLD,Budget Planning,dmehta@healthlinkx.com,https://linkedin.com/in/diyamehta,742-700-1150

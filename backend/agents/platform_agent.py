@@ -20,50 +20,45 @@ def decide_channel_with_rules(classification, icp):
     business_behavior = str(classification.get("business_behavior") or classification.get("businessBehavior", "")).lower()
     
     # ==========================================
-    # PRIORITY 1: URGENCY (First Constraint)
+    # PRIORITY 1: URGENCY (Most Important Constraint)
     # ==========================================
-    # Immediate/High urgency → Always Call (time-sensitive, direct)
-    if urgency in ["immediate", "high"]:
+    # Immediate urgency → Call (time-sensitive, direct)
+    if urgency == "immediate":
         return "Call"
+
+    # ==========================================
+    # PRIORITY 2: ENGAGEMENT SCORE & EMAIL AVAILABILITY
+    # ==========================================
+    has_email = bool(icp.get("email"))
     
-    # ==========================================
-    # PRIORITY 2: ENGAGEMENT SCORE (Second Constraint)
-    # ==========================================
-    # High engagement (≥75) → Email (they're interested, personalized outreach)
-    if engagement_score >= 75:
+    # High/Medium engagement (≥40) + has email → Email
+    if engagement_score >= 40 and has_email:
         return "Email"
     
-    # Low engagement (<40) → LinkedIn (soft, non-intrusive approach)
-    if engagement_score < 40:
+    # Very high engagement regardless of icp_priority
+    if engagement_score >= 75:
+        return "Email"
+
+    # ==========================================
+    # PRIORITY 3: ICP PRIORITY LEVEL
+    # ==========================================
+    if icp_priority in ["high", "medium"] and has_email:
+        return "Email"
+    
+    if icp_priority == "low" and not has_email:
         return "LinkedIn"
-    
+
     # ==========================================
-    # PRIORITY 3: ICP PRIORITY LEVEL (Third Constraint)
+    # PRIORITY 4: BUSINESS BEHAVIOR
     # ==========================================
-    # Medium engagement (40-74) → Check ICP Priority
-    if icp_priority == "high":
-        return "Email"  # High priority ICP → Email (worth personalized effort)
-    
-    if icp_priority == "low":
-        return "LinkedIn"  # Low priority ICP → LinkedIn (exploratory)
-    
-    # ==========================================
-    # PRIORITY 4: BUSINESS BEHAVIOR (Fourth Constraint)
-    # ==========================================
-    # Medium engagement + Medium priority → Check behavior
     active_keywords = ["active", "urgent", "hiring", "expansion", "scaling", "immediate"]
-    exploratory_keywords = ["exploring", "exploratory", "interested", "future", "considering"]
-    
-    if any(keyword in business_behavior for keyword in active_keywords):
-        return "Email"  # Active behavior → Email
-    
-    if any(keyword in business_behavior for keyword in exploratory_keywords):
-        return "LinkedIn"  # Exploratory → LinkedIn
+    if any(keyword in business_behavior for keyword in active_keywords) and has_email:
+        return "Email"
     
     # ==========================================
-    # DEFAULT: Email (most professional and scalable)
+    # DEFAULT: Email if possible, else LinkedIn
     # ==========================================
-    return "Email"
+    return "Email" if has_email else "LinkedIn"
 
 
 def decide_channel_with_llm(classification, icp):

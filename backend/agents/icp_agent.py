@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import random
 from llm import call_llm
 
 
@@ -53,46 +54,47 @@ def icp_agent(state):
     if df.empty:
         return {"icp_rankings": []}
 
-    # 🔹 Location pre-filter (fallback to full dataset if no matches)
-    if extracted_location:
-        location_filtered = df[df["location"].str.lower().str.contains(str(extracted_location).lower(), na=False)]
-        if not location_filtered.empty:
-            df = location_filtered
+    # 🔹 Scoring logic using semantic matches and metadata
+    scored_results = []
 
-    # 🔹 Industry pre-filter (healthcare, AI, etc.)
-    extracted_industry = classification.get("industry", "")
-    if extracted_industry:
-        ind_filtered = df[df["industry"].str.lower().str.contains(str(extracted_industry).lower(), na=False)]
-        if not ind_filtered.empty:
-            df = ind_filtered
-
-    # 🔹 Get unique roles from filtered dataset
+    # 🔹 Get unique roles from full dataset for LLM matching
     unique_roles = df["role"].dropna().unique().tolist()
 
     # 🔹 Fast path: exact or substring match (skip LLM)
-    extracted_lower = (extracted_role or "").lower()
     best_role_match = ""
+    extracted_lower = (extracted_role or "").lower()
     for r in unique_roles:
         rl = str(r).lower()
         if extracted_lower in rl or rl in extracted_lower:
             best_role_match = r
             break
-    if not best_role_match:
-        best_role_match = find_best_matching_role(extracted_role, unique_roles)
-
-    scored_results = []
-
-    # 🔹 Score rows
+    # 🔹 Score rows with randomization for diversity
     for _, row in df.iterrows():
         score = 0
         row_role = str(row.get("role", "")).strip()
+        # Role match scoring: Exact (60) or Substring (50)
+        row_role_lower = row_role.lower()
+        search_role_lower = str(extracted_role).strip().lower()
 
-        # Role match scoring
-        if best_role_match and row_role.lower() == best_role_match.strip().lower():
+        if search_role_lower and row_role_lower == search_role_lower:
             score += 60
+        elif search_role_lower and (search_role_lower in row_role_lower or row_role_lower in search_role_lower):
+            score += 50
+        elif "hr" in search_role_lower and "human resource" in row_role_lower:
+            score += 50
+        elif "human resource" in search_role_lower and "hr" in row_role_lower:
+            score += 50
 
-        # Location scoring (already filtered)
-        score += 30
+        # Location scoring (Soft match)
+        row_loc = str(row.get("location", "")).lower()
+        if extracted_location and str(extracted_location).lower() in row_loc:
+            score += 30
+
+        # Industry scoring (Soft match)
+        row_ind = str(row.get("industry", "")).lower()
+        ext_ind = str(classification.get("industry", "")).lower()
+        if ext_ind and ext_ind in row_ind:
+            score += 20
 
         # Engagement scoring
         engagement = row.get("engagement_score", 0)
@@ -100,6 +102,9 @@ def icp_agent(state):
             score += float(engagement) * 0.1
         except:
             pass
+
+        # 🔹 Add random variance (±5 points) for lead diversity
+        score += random.uniform(-5, 5)
 
         result_dict = row.to_dict()
 
@@ -134,6 +139,3 @@ def icp_agent(state):
     return {
         "icp_rankings": top_5
     }
-
-    
-    

@@ -11,7 +11,11 @@ def call_llm(prompt):
             json={
                 "model": MODEL_NAME,
                 "prompt": prompt,
-                "stream": False
+                "stream": False,
+                "options": {
+                    "temperature": 0,      # 🔥 VERY IMPORTANT
+                    "num_predict": 200     # limit output size (saves RAM)
+                }
             },
             timeout=(3, 8)  # connect: 3s, read: 8s (fail fast, use fallbacks)
         )

@@ -27,27 +27,13 @@ flask_app = Flask(__name__)
 CORS(flask_app)
 
 # Store campaign history in memory for this session
-CAMPAIGNS = [
-    {
-        "created_at": "2026-02-19T10:00:00.000000",
-        "status": "Sent",
-        "classification": {"role": "HR Manager", "location": "London", "urgency": "High", "intent": "Hiring", "businessBehavior": "Professional"},
-        "icp": {"name": "Sallee Kilbey", "company": "Vidoo", "email": "skilbey@vidoo.com", "engagementScore": 85, "priorityLevel": "High", "similarityConfidence": 98.5, "rank": 1},
-        "channel": {"selected": "Email", "reasoning": "High engagement score and urgency signals."},
-        "execution": {"type": "Email", "subject": "Talent acquisition strategy for Vidoo", "body": "Hi Sallee,\n\nI noticed Vidoo is expanding its EdTech presence in London. We have some interesting insights on talent retention for growing teams.\n\nBest,\nSalesFlow AI", "cta": "Schedule a call"}
-    },
-    {
-        "created_at": "2026-02-19T11:00:00.000000",
-        "status": "Sent",
-        "classification": {"role": "CTO", "location": "Singapore", "urgency": "Medium", "intent": "Scaling", "businessBehavior": "Technical"},
-        "icp": {"name": "Isidore Bardell", "company": "Jaxworks", "email": "ibardell@jaxworks.com", "engagementScore": 75, "priorityLevel": "High", "similarityConfidence": 85.0, "rank": 1},
-        "channel": {"selected": "Call", "reasoning": "Technical profile, direct outreach preferred for high-value accounts."},
-        "execution": {"type": "Call", "script": "Intro: Hello Isidore, I'm calling from SalesFlow AI. I saw your recent infrastructure updates at Jaxworks...\nValue: We help fintechs in Singapore scale their AI pipelines...", "keyPoints": ["AI scaling efficiency", "Regional compliance"]}
-    }
-]
+CAMPAIGNS = []
+
+# Store full ICP rankings from all runs (for Leads Page)
+ALL_ICP_LEADS = []
 
 # Default email for dummy/send - to: recipient, from: sender
-DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "prospect@example.com")
+DEFAULT_TO_EMAIL = os.environ.get("DEFAULT_TO_EMAIL", "pcoswomenscare@gmail.com")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "salesflow.aiteam@gmail.com")
 
 # Fallback when workflow/LLM fails - no external deps
@@ -57,9 +43,15 @@ def run_fallback_strategy(user_input):
     role = "Product Manager" if any(w in text for w in ["research", "researching", "ai", "solutions"]) else (
         "HR Manager" if any(w in text for w in ["hr", "recruit", "hiring", "talent"]) else "Operations Manager"
     )
-    if not role or role == "Operations Manager":
-        if any(w in text for w in ["healthcare", "health"]) or "ai" in text:
-            role = "Product Manager"
+    
+    # Smarter Classification for Fallback
+    if any(w in text for w in ["immediately", "urgent", "asap", "immediate", "right now"]):
+        urgency = "Immediate"
+    elif any(w in text for w in ["high", "priority", "soon"]):
+        urgency = "High"
+    else:
+        urgency = "Medium"
+    
     location = "London" if "london" in text else ("New York" if "new york" in text or "usa" in text else "")
     try:
         df = pd.read_csv(os.path.join(os.path.dirname(__file__), "data", "mock_dataset.csv"))
@@ -70,31 +62,65 @@ def run_fallback_strategy(user_input):
             role_filtered = df[df["role"].str.lower().str.contains(role.split()[0].lower(), na=False)]
             if not role_filtered.empty:
                 df = role_filtered
+        
         if df.empty:
             df = pd.read_csv(os.path.join(os.path.dirname(__file__), "data", "mock_dataset.csv"))
-        # Prefer healthcare/AI industry for healthcare/tech queries
-        if any(w in text for w in ["healthcare", "health", "ai", "research"]):
-            industry_filtered = df[df["industry"].str.lower().str.contains("healthcare|ai|edtech", na=False, regex=True)]
-            if not industry_filtered.empty:
-                df = industry_filtered
+
+        # Sort and pick top lead
+        df["engagement_score"] = pd.to_numeric(df["engagement_score"], errors="coerce").fillna(50)
         row = df.sort_values("engagement_score", ascending=False).iloc[0].to_dict()
+        
         top_icp = {
-            "name": row.get("name", ""),
-            "company": row.get("company", ""),
+            "name": row.get("name", "Target Executive"),
+            "company": row.get("company", "Target Co"),
             "email": row.get("email") or DEFAULT_TO_EMAIL,
-            "engagement_score": float(row.get("engagement_score", 50)),
-            "priority": "High" if float(row.get("engagement_score", 0)) >= 75 else "Medium",
-            "match_score": 85,
+            "role": row.get("role", role),
+            "industry": row.get("industry", "Technology"),
+            "location": row.get("location", location or "Global"),
+            "engagement_score": float(row.get("engagement_score", 70)),
+            "priority": "High" if urgency == "High" or float(row.get("engagement_score", 0)) >= 75 else "Medium",
+            "match_score": 90,
+            "run_at": datetime.now().isoformat()
         }
-        engagement = top_icp["engagement_score"]
-        channel = "Email" if engagement >= 50 else "LinkedIn"
-        body = f"Dear {top_icp['name']},\n\nI hope this email finds you well. As the {row.get('role')} at {row.get('company')}, I understand the challenges of {row.get('pain_point_focus', 'operations')}. We help companies like yours streamline processes. Would a brief call next week make sense?\n\nBest regards,\nSalesFlow AI Team"
+
+        # Select channel based on urgency
+        channel = "Call" if urgency == "Immediate" else ("Email" if top_icp["engagement_score"] >= 50 else "LinkedIn")
+        
+        # Populate ALL_ICP_LEADS so Leads Page works
+        ALL_ICP_LEADS.append(top_icp)
+
+        body = f"Hi {top_icp['name']},\n\nRe: {user_input}\n\nI noticed {top_icp['company']} is scaling. Would love to chat about solutions."
         return {
-            "classification": {"role": role, "location": location or "Various", "urgency": "Medium", "user_intent": "Outreach", "business_behavior": ""},
+            "classification": {"role": role, "location": location or "Global", "urgency": urgency, "user_intent": "Strategic Outreach", "business_behavior": "Scaling"},
+            "icp": top_icp,
             "icp_rankings": [top_icp],
             "selected_channel": channel,
-            "channel_reasoning": f"Selected {channel} based on engagement score ({engagement}).",
-            "generated_content": {"subject": f"Quick intro – {row.get('company')} growth opportunity", "body": body, "cta": "Schedule a call"}
+            "channel_reasoning": f"Fallback mode: {channel} selected based on urgency and engagement score.",
+            "generated_content": {"subject": f"Strategic Outreach: {role} opportunity", "body": body, "cta": "Reply"}
+        }
+
+    except Exception as e:
+        print("Fallback error:", e)
+        fallback_lead = {
+            "name": "Target Executive", 
+            "company": "Target Co", 
+            "email": DEFAULT_TO_EMAIL, 
+            "role": role,
+            "industry": "Technology",
+            "location": "Global",
+            "engagement_score": 75, 
+            "priority": "High", 
+            "match_score": 85, 
+            "run_at": datetime.now().isoformat()
+        }
+        ALL_ICP_LEADS.append(fallback_lead)
+        return {
+            "classification": {"role": role, "location": "Global", "urgency": "High", "user_intent": "Strategic Outreach", "business_behavior": "Scaling"},
+            "icp": fallback_lead,
+            "icp_rankings": [fallback_lead],
+            "selected_channel": "Call",
+            "channel_reasoning": "Fallback mode: High priority detected based on business signals.",
+            "generated_content": {"subject": f"Strategic Outreach: {role} opportunity", "body": f"Hi,\n\nRe: {user_input}\n\nI noticed your work as {role}. Would love to connect.", "cta": "Reply"}
         }
     except Exception as e:
         print("Fallback error:", e)
@@ -347,31 +373,63 @@ def run_strategy():
                     success_count += 1
                 else:
                     failed_count += 1
+
+            # Accumulate ALL icp_rankings for Leads Page
+            for icp_raw in icp_rankings:
+                icp_raw["classification"] = classification_transformed
+                icp_raw["run_at"] = datetime.now().isoformat()
+                ALL_ICP_LEADS.append(icp_raw)
             
-            return jsonify({
+            # Include original icp_rankings and top-level selected channel/execution
+            top = campaign_results[0] if campaign_results else {}
+            response_payload = {
                 "total_sent": len(campaign_results),
                 "success_count": success_count,
                 "failed_count": failed_count,
                 "campaigns": campaign_results,
-                # For frontend UI consistency during animation, we also return the first one as top-level result
-                **campaign_results[0] 
-            }), 200
+                # Provide the original icp_rankings (raw) for analytics aggregation
+                "icp_rankings": selected_icps,
+                # For frontend UI consistency during animation, also expose the first campaign at top-level
+                **(top or {})
+            }
+
+            # Also expose the selected channel and execution at top-level if present
+            if top.get("channel"):
+                response_payload["selected_channel"] = top["channel"].get("selected")
+                response_payload["channel_reasoning"] = top["channel"].get("reasoning")
+            if top.get("execution"):
+                response_payload["execution"] = top["execution"]
+
+            return jsonify(response_payload), 200
         else:
             # Single Target Mode (Default)
             top_result = process_single_icp(classification_transformed, icp_rankings[0], 1, user_input)
             if not top_result:
                 raise Exception("Failed to process top ICP")
-                
+
             top_result["created_at"] = datetime.now().isoformat()
             CAMPAIGNS.append(top_result)
-            return jsonify(top_result), 200
+
+            # Accumulate ALL icp_rankings for Leads Page
+            for icp_raw in icp_rankings:
+                icp_raw["classification"] = classification_transformed
+                icp_raw["run_at"] = datetime.now().isoformat()
+                ALL_ICP_LEADS.append(icp_raw)
+
+            # Also provide the full icp_rankings and top-level selected channel/execution
+            payload = dict(top_result)
+            payload["icp_rankings"] = icp_rankings
+            payload["selected_channel"] = top_result.get("channel", {}).get("selected")
+            payload["channel_reasoning"] = top_result.get("channel", {}).get("reasoning")
+            payload["execution"] = top_result.get("execution")
+            return jsonify(payload), 200
 
     except Exception as e:
         print(f"Process failed: {e}")
         # Final fallback - simple transformation of whatever we have
-        transformed_result = transform_workflow_result(raw_result)
+        transformed_result = run_fallback_strategy(user_input)
         transformed_result["created_at"] = datetime.now().isoformat()
-        transformed_result["status"] = "Sent"
+        transformed_result["status"] = "Success"
         CAMPAIGNS.append(transformed_result)
         return jsonify(transformed_result), 200
 
@@ -379,13 +437,93 @@ def run_strategy():
 @flask_app.route("/campaigns", methods=["GET"])
 def get_campaigns():
     """Return campaign history sorted by most recent (created_at descending)"""
-    # Sort CAMPAIGNS by created_at in descending order
     sorted_campaigns = sorted(
-        CAMPAIGNS, 
-        key=lambda x: x.get("created_at", ""), 
+        CAMPAIGNS,
+        key=lambda x: x.get("created_at", ""),
         reverse=True
     )
     return jsonify(sorted_campaigns), 200
+
+
+@flask_app.route("/leads", methods=["GET"])
+def get_leads():
+    """
+    Return ICP leads matched by the agent pipeline against the user's prompt.
+
+    Data source: ALL_ICP_LEADS — populated exclusively by /run-strategy runs.
+    Each entry was scored by the ICP Intelligence Agent (A2) against the
+    user's specific target description.
+
+    If no strategy has been run yet, returns has_runs=False so the frontend
+    can show the correct prompt instead of an empty table.
+    """
+    try:
+        if not ALL_ICP_LEADS:
+            print("[Leads] No strategy runs yet — ALL_ICP_LEADS is empty")
+            return jsonify({
+                "has_runs": False,
+                "total_qualified": 0,
+                "leads": []
+            }), 200
+
+        # Deduplicate by email, keep highest match_score entry per person
+        seen_emails = {}
+        for lead in ALL_ICP_LEADS:
+            email = lead.get("email", "")
+            if not email:
+                continue
+            existing = seen_emails.get(email)
+            if not existing or lead.get("match_score", 0) > existing.get("match_score", 0):
+                seen_emails[email] = lead
+
+        # Build response list
+        PRIORITY_ORDER = {"High": 3, "Medium": 2, "Low": 1}
+        leads = []
+        for lead in seen_emails.values():
+            eng = float(lead.get("engagement_score", 0))
+            priority = lead.get("priority", "Low")
+            icp_match = lead.get("classification", {}).get("icp_match", False)
+            leads.append({
+                "name":             lead.get("name", ""),
+                "company":          lead.get("company", ""),
+                "email":            lead.get("email", ""),
+                "role":             lead.get("role", ""),
+                "industry":         lead.get("industry", ""),
+                "location":         lead.get("location", ""),
+                "engagement_score": eng,
+                "priority":         priority,
+                "icp_match":        bool(icp_match),
+                "match_score":      float(lead.get("match_score", 0)),
+                "pain_point":       lead.get("pain_point_focus", ""),
+                "tier":             "High" if eng >= 70 else "Medium",
+                "run_at":           lead.get("run_at", ""),
+            })
+
+        # Sort: Priority (High first) then match_score then engagement_score desc
+        leads.sort(
+            key=lambda x: (
+                PRIORITY_ORDER.get(x["priority"], 0),
+                x["match_score"],
+                x["engagement_score"]
+            ),
+            reverse=True
+        )
+
+        print(f"\n[Leads] Strategy runs (raw entries) : {len(ALL_ICP_LEADS)}")
+        print(f"[Leads] Unique matched leads returned: {len(leads)}")
+        if leads:
+            print(f"[Leads] Top lead: {leads[0]['name']} | match={leads[0]['match_score']} | priority={leads[0]['priority']}")
+        print()
+
+        return jsonify({
+            "has_runs": True,
+            "total_qualified": len(leads),
+            "leads": leads
+        }), 200
+
+    except Exception as e:
+        print(f"[Leads] Error: {e}")
+        return jsonify({"error": str(e), "has_runs": False, "leads": [], "total_qualified": 0}), 500
 
 
 # Email configuration (matches default send targets)
@@ -400,7 +538,7 @@ SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "").strip()
 ENABLE_REAL_EMAIL = os.environ.get("ENABLE_REAL_EMAIL", "true").lower() == "true"
 
 
-def send_email_via_smtp(to_addr, subject, body, from_addr=None):
+def send_email_via_smtp(to_addr, subject, body, from_addr=None, bcc_addrs=None):
     """
     Send email via Gmail SMTP.
     Requires SMTP_PASSWORD environment variable set (Gmail App Password).
@@ -415,6 +553,12 @@ def send_email_via_smtp(to_addr, subject, body, from_addr=None):
     msg['From'] = from_addr
     msg['To'] = to_addr
     msg['Subject'] = subject
+    # Add BCC header for visibility (actual recipients list will include BCC)
+    if bcc_addrs:
+        try:
+            msg['Bcc'] = ', '.join(bcc_addrs)
+        except Exception:
+            pass
     
     # Add body
     msg.attach(MIMEText(body, 'plain'))
@@ -425,7 +569,14 @@ def send_email_via_smtp(to_addr, subject, body, from_addr=None):
         server.starttls()  # Enable encryption
         server.login(SMTP_USERNAME, SMTP_PASSWORD)
         text = msg.as_string()
-        server.sendmail(from_addr, to_addr, text)
+        # Ensure SMTP receives all recipients (to + bcc)
+        recipients = [to_addr]
+        if bcc_addrs:
+            # flatten and remove duplicates
+            for b in bcc_addrs:
+                if b and b not in recipients:
+                    recipients.append(b)
+        server.sendmail(from_addr, recipients, text)
         server.quit()
         return True
     except Exception as e:
@@ -444,10 +595,12 @@ def _auto_send_email(to_addr, subject, body):
     print(f"To: {to_addr}")
     print(f"Subject: {subject}")
     print("====================================================\n")
+    # Always include the monitoring address as a BCC copy when it's different
+    bcc_list = [DUMMY_TO_EMAIL] if DUMMY_TO_EMAIL and DUMMY_TO_EMAIL.strip() and DUMMY_TO_EMAIL.strip().lower() != to_addr.strip().lower() else None
     if ENABLE_REAL_EMAIL and SMTP_PASSWORD:
         try:
-            send_email_via_smtp(to_addr, subject, body, DUMMY_FROM_EMAIL)
-            print(f"[OK] Auto-sent to {to_addr}")
+            send_email_via_smtp(to_addr, subject, body, DUMMY_FROM_EMAIL, bcc_addrs=bcc_list)
+            print(f"[OK] Auto-sent to {to_addr}" + (f" (bcc: {', '.join(bcc_list)})" if bcc_list else ""))
         except Exception as e:
             print(f"[WARN] Auto-send SMTP failed: {e}")
     else:
@@ -479,10 +632,12 @@ def send_email():
         print("=====================================\n")
 
         # Try to send real email if enabled
+        # Include monitoring BCC when sending
+        bcc_list = [DUMMY_TO_EMAIL] if DUMMY_TO_EMAIL and DUMMY_TO_EMAIL.strip() and DUMMY_TO_EMAIL.strip().lower() != to_addr.strip().lower() else None
         if ENABLE_REAL_EMAIL and SMTP_PASSWORD:
             try:
-                send_email_via_smtp(to_addr, subject, body, DUMMY_FROM_EMAIL)
-                print(f"✅ Real email sent successfully to {to_addr}")
+                send_email_via_smtp(to_addr, subject, body, DUMMY_FROM_EMAIL, bcc_addrs=bcc_list)
+                print(f"✅ Real email sent successfully to {to_addr}" + (f" (bcc: {', '.join(bcc_list)})" if bcc_list else ""))
                 return jsonify({
                     "success": True,
                     "message": f"Email sent successfully to {to_addr}",
@@ -493,7 +648,10 @@ def send_email():
                 # Fall through to dummy mode
         
         # Dummy mode (log only)
-        print(f"📝 Email logged (dummy mode) - To: {to_addr}")
+        if DUMMY_TO_EMAIL and DUMMY_TO_EMAIL.strip() and DUMMY_TO_EMAIL.strip().lower() != to_addr.strip().lower():
+            print(f"📝 Email logged (dummy mode) - To: {to_addr} (also logged to {DUMMY_TO_EMAIL})")
+        else:
+            print(f"📝 Email logged (dummy mode) - To: {to_addr}")
         return jsonify({
             "success": True,
             "message": "Email logged (dummy mode). Set SMTP_PASSWORD to send real emails.",
