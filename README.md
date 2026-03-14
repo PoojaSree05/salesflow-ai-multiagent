@@ -56,3 +56,27 @@ npm run dev
 Open in browser:
 
 http://localhost:8080
+
+
+## 📸 Application Screenshots
+
+### Dashboard – Strategy Input
+![Dashboard](Screenshots/dashboard.png)
+
+### Multi-Agent Pipeline Visualization
+![Pipeline](Screenshots/piplinevisualization.png)
+
+### Email Preview Before Sending
+![Email](Screenshots/email-preview.png)
+
+### AI Agent Orchestration
+![Orchestration](Screenshots/orchestration.png)
+
+### Campaign Analytics
+![Campaigns](Screenshots/campaigns.png)
+
+### ICP Matched Leads
+![Leads](Screenshots/leads.png)
+
+### SMTP Settings Configuration
+![Settings](Screenshots/settings.png)
